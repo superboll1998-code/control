@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<title>Control Personal</title>
+<style>
+:root{--n:#00ff41;--n2:#00c832;--d:#0b5d22;--p:#03140a;--t:#d2ffdc;--m:#6fae80;--r:#ff3860;--y:#ffd23f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#000;color:var(--t);font-family:'Share Tech Mono',ui-monospace,Menlo,Consolas,monospace;font-size:15px}
+a{color:var(--n)}
+#rain{position:fixed;inset:0;z-index:0;opacity:.14;pointer-events:none}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;background:rgba(0,0,0,.88);backdrop-filter:blur(6px);border-bottom:1px solid var(--d)}
+.logo{color:var(--n);font-size:18px;letter-spacing:2px;text-shadow:0 0 8px var(--n)}
+.logo i{font-style:normal;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.sync{font-size:11px;color:var(--m);text-align:right}
+main{position:relative;z-index:1;padding:12px 12px 100px;max-width:640px;margin:0 auto}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:5;display:flex;background:rgba(0,0,0,.95);border-top:1px solid var(--d);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;color:var(--m);font:inherit;font-size:11px;padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button b{font-size:19px;font-weight:normal;line-height:1}
+nav button.on{color:var(--n);text-shadow:0 0 6px var(--n)}
+nav .add b{width:48px;height:48px;border-radius:50%;border:2px solid var(--n);display:grid;place-items:center;margin-top:-22px;background:#000;box-shadow:0 0 16px var(--n);color:var(--n);font-size:28px}
+.card{background:linear-gradient(180deg,var(--p),#010805);border:1px solid var(--d);border-radius:12px;padding:12px;margin-bottom:12px}
+h2{font-size:13px;color:var(--n);letter-spacing:1.5px;margin:0 0 10px;text-transform:uppercase;font-weight:normal}
+.big{font-size:32px;color:var(--n);text-shadow:0 0 10px rgba(0,255,65,.6)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.kpi small{display:block;color:var(--m);font-size:10px;text-transform:uppercase;letter-spacing:1px}
+.kpi span{font-size:17px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px dashed #0d3a1b}
+.row:last-child{border-bottom:0}
+.click{cursor:pointer}
+.muted{color:var(--m);font-size:12px}
+.pos{color:var(--n)} .neg{color:var(--r)}
+.bar{height:6px;background:#06240f;border-radius:4px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--n);box-shadow:0 0 6px var(--n)}
+.bar i.w{background:var(--y);box-shadow:none} .bar i.x{background:var(--r);box-shadow:none}
+.btn{background:transparent;border:1px solid var(--n);color:var(--n);font:inherit;padding:10px 14px;border-radius:9px;cursor:pointer}
+.btn.full{width:100%;padding:14px;font-size:16px}
+.btn.solid{background:var(--n);color:#000;box-shadow:0 0 14px rgba(0,255,65,.5)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.red{border-color:var(--r);color:var(--r)}
+.btns{display:flex;gap:10px;margin-top:16px}.btns .btn{flex:1}
+input,select,textarea{width:100%;background:#000;border:1px solid var(--d);color:var(--t);font:inherit;padding:11px;border-radius:9px;outline:none}
+input:focus,select:focus{border-color:var(--n);box-shadow:0 0 8px rgba(0,255,65,.35)}
+input[type=date]{color-scheme:dark}
+label{display:block;color:var(--m);font-size:11px;margin:12px 0 5px;text-transform:uppercase;letter-spacing:1px}
+.monto{font-size:36px;text-align:center;color:var(--n);text-shadow:0 0 8px rgba(0,255,65,.5)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1px solid var(--d);background:#000;color:var(--t);padding:7px 11px;border-radius:20px;font:inherit;font-size:13px}
+.chip.on{border-color:var(--n);color:#000;background:var(--n)}
+.tag{font-size:11px;padding:3px 8px;border-radius:10px;border:1px solid var(--d);white-space:nowrap}
+.tag.ok{color:var(--n);border-color:var(--n)} .tag.warn{color:var(--y);border-color:var(--y)} .tag.bad{color:var(--r);border-color:var(--r)}
+.mes{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:12px}
+.mes button{background:#000;border:1px solid var(--d);color:var(--n);width:36px;height:36px;border-radius:50%;font:inherit;font-size:18px}
+.mes b{min-width:160px;text-align:center;color:var(--n);letter-spacing:1px;font-weight:normal}
+#modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.78);display:none;align-items:flex-end}
+#modal.on{display:flex}
+#modal .sheet{background:#020c05;border-top:1px solid var(--n);border-radius:16px 16px 0 0;width:100%;max-width:640px;margin:0 auto;max-height:90vh;overflow:auto;padding:16px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -6px 24px rgba(0,255,65,.25)}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:30;background:#000;border:1px solid var(--n);color:var(--n);padding:10px 16px;border-radius:10px;display:none;max-width:90%;text-align:center;box-shadow:0 0 12px rgba(0,255,65,.4)}
+#toast.err{border-color:var(--r);color:var(--r);box-shadow:none}
+.menu .row{font-size:15px;padding:14px 0}
+#mapa{height:62vh;border-radius:12px;border:1px solid var(--d);background:#000}
+.gps{font-size:12px;margin-top:14px}
+.foto-prev{max-width:100%;max-height:220px;border-radius:8px;margin-top:10px;border:1px solid var(--d)}
+.chk{display:flex;gap:8px;align-items:center;margin-top:12px}.chk input{width:auto}
+.back{background:none;border:0;color:var(--n);font:inherit;padding:4px 0 12px;font-size:14px}
+ol{margin:0}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#000!important;color:var(--t)!important;border:1px solid var(--n)}
+</style>
+</head>
+<body>
+<canvas id="rain"></canvas>
+<header>
+  <div class="logo">CONTROL<i>_</i></div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <button id="inst" class="btn sm" style="display:none" onclick="instalarApp()">Instalar</button>
+    <div class="sync" id="sync"></div>
+  </div>
+</header>
+<main id="view"></main>
+<nav>
+  <button data-v="inicio" onclick="go('inicio')"><b>⌂</b>Inicio</button>
+  <button data-v="pagos" onclick="go('pagos')"><b>📅</b>Pagos</button>
+  <button data-v="nuevo" class="add" onclick="go('nuevo')"><b>+</b>Gasto</button>
+  <button data-v="vehiculo" onclick="go('vehiculo')"><b>🚗</b>Vehículo</button>
+  <button data-v="mas" onclick="go('mas')"><b>☰</b>Más</button>
+</nav>
+<div id="modal" onclick="if(event.target===this)cerrar()"><div class="sheet" id="sheet"></div></div>
+<div id="toast"></div>
+
+<script>
+/* ============ utilidades ============ */
+const $ = s => document.querySelector(s);
+const LS = {
+  get: (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast('Memoria del teléfono llena', 'err'); } }
+};
+const p2 = x => String(x).padStart(2, '0');
+const hoyStr = () => { const d = new Date(); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()); };
+const horaAhora = () => { const d = new Date(); return p2(d.getHours()) + ':' + p2(d.getMinutes()); };
+const n = x => parseFloat(String(x ?? '').replace(',', '.')) || 0;
+const $$ = v => '$' + n(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sum = a => a.reduce((s, x) => s + n(x.Monto), 0);
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const nombreMes = p => MESES[+p.slice(5) - 1] + ' ' + p.slice(0, 4);
+const diasMes = p => new Date(+p.slice(0, 4), +p.slice(5), 0).getDate();
+const venceEn = (p, dia) => p + '-' + p2(Math.min(+dia, diasMes(p)));
+const dif = (a, b) => Math.round((new Date(a + 'T12:00') - new Date(b + 'T12:00')) / 864e5);
+const movMes = (p, k) => { let y = +p.slice(0, 4), m = +p.slice(5) + k; if (m < 1) { m = 12; y--; } if (m > 12) { m = 1; y++; } return y + '-' + p2(m); };
+const enMes = (f, p) => String(f).slice(0, 7) === p;
+const fCorta = f => { f = String(f); return f.slice(8, 10) + '/' + f.slice(5, 7); };
+
+const CATS = {
+  'Diario':          { i: '🍬', subs: ['Comida', 'Dulces/Snacks', 'Bebidas', 'Café', 'Transporte', 'Propinas', 'Otros'] },
+  'Despensa':        { i: '🛒', subs: ['Supermercado', 'Mercado', 'Carnes', 'Frutas y verduras', 'Limpieza', 'Higiene', 'Otros'] },
+  'Combustible':     { i: '⛽', subs: [] },
+  'Vehículo':        { i: '🚗', subs: ['Mantenimiento', 'Repuestos', 'Lavado', 'Parqueo', 'Peaje', 'Llantas', 'Seguro', 'Trámites', 'Otros'] },
+  'Construcción':    { i: '🏗️', subs: ['Cemento', 'Hierro', 'Bloques', 'Arena/Grava', 'Mano de obra', 'Herramientas', 'Electricidad', 'Plomería', 'Pintura', 'Madera', 'Transporte material', 'Otros'] },
+  'Vestimenta':      { i: '👕', subs: ['Perfume', 'Zapatos', 'Pantalón', 'Camisa', 'Camiseta', 'Suéter', 'Tacos de fútbol', 'Accesorios', 'Otros'] },
+  'Hogar':           { i: '🏠', subs: ['Muebles', 'Electrodomésticos', 'Reparaciones', 'Decoración', 'Otros'] },
+  'Salud':           { i: '💊', subs: ['Farmacia', 'Consulta', 'Gimnasio', 'Otros'] },
+  'Entretenimiento': { i: '🎮', subs: ['Salidas', 'Comida fuera', 'Cine', 'Deportes', 'Juegos', 'Otros'] },
+  'Otros':           { i: '📦', subs: ['Regalos', 'Educación', 'Mascotas', 'Otros'] },
+  'Pagos fijos':     { i: '📅', subs: [], hidden: true }
+};
+const TIPOS_MANT = ['Cambio de aceite', 'Filtros', 'Frenos', 'Llantas', 'Batería', 'Alineado y balanceo', 'Afinado', 'Revisión general', 'Otro'];
+const CAT_FIJOS = ['Telefonía', 'Servicios', 'Suscripciones', 'Vivienda', 'Deudas', 'Otros'];
+const ico = c => (CATS[c] || { i: '•' }).i;
+
+/* ============ estado ============ */
+let cfg = LS.get('cp_cfg', { url: '', token: '' });
+const VACIO = { gastos: [], pagosFijos: [], pagosRegistro: [], mantenimientos: [], combustible: [], ingresos: [], deudas: [], abonos: [], presupuestos: [], documentos: [], sheetUrl: '', telegram: false, bot: '' };
+const S = { d: LS.get('cp_data', null), mes: hoyStr().slice(0, 7), vista: 'inicio', pos: null, posErr: '', gpsPend: false, ocupado: false, mapaTodo: false };
+const D = () => S.d || VACIO;
+const nuevoF = () => ({ monto: '', cat: '', sub: '', desc: '', metodo: 'Efectivo', fecha: hoyStr(), foto: null, fotoPrev: '', km: '', gal: '', lleno: true, est: '', tipo: '', taller: '', pkm: '', pfecha: '' });
+let F = nuevoF();
+
+/* ============ API ============ */
+const COLA_OK = ['gasto', 'combustible', 'mantenimiento', 'ingreso', 'pagar', 'abono'];
+async function api(action, data) {
+  if (!cfg.url || !cfg.token) throw new Error('Configura la conexión en Más → Conexión');
+  const r = await fetch(cfg.url, { method: 'POST', body: JSON.stringify({ token: cfg.token, action, data }) });
+  let j;
+  try { j = await r.json(); } catch (e) { throw new Error('Respuesta inválida del servidor. Revisa la URL y que la implementación sea "Cualquier usuario".'); }
+  if (!j.ok) throw new Error(j.error || 'Error');
+  return j.data;
+}
+async function mutar(action, data, msg) {
+  if (S.ocupado) return false;
+  S.ocupado = true; setSync('⟳ guardando…');
+  try {
+    await api(action, data);
+    toast(msg || 'Guardado ✓');
+    await cargar(true);
+    return true;
+  } catch (e) {
+    if (e instanceof TypeError && COLA_OK.includes(action)) {
+      const c = LS.get('cp_cola', []); c.push({ action, data }); LS.set('cp_cola', c);
+      toast('Sin señal: guardado en el teléfono, se enviará luego 📡'); setSync();
+      return true;
+    }
+    toast(e.message, 'err'); setSync();
+    return false;
+  } finally { S.ocupado = false; }
+}
+async function vaciarCola() {
+  const c = LS.get('cp_cola', []);
+  while (c.length) {
+    try { await api(c[0].action, c[0].data); }
+    catch (e) { if (e instanceof TypeError) throw e; toast('Un registro pendiente falló: ' + e.message, 'err'); }
+    c.shift(); LS.set('cp_cola', c);
+  }
+}
+async function cargar(sil) {
+  if (!cfg.url) { render(); return false; }
+  setSync('⟳ sincronizando…');
+  let ok = false;
+  try {
+    await vaciarCola();
+    S.d = await api('todo'); LS.set('cp_data', S.d); ok = true; setSync();
+  } catch (e) {
+    setSync('⚠ sin conexión');
+    if (!sil) toast(e instanceof TypeError ? 'Sin conexión: mostrando datos guardados' : e.message, 'err');
+  }
+  if (S.vista !== 'nuevo') render();
+  return ok;
+}
+function setSync(t) {
+  const c = LS.get('cp_cola', []).length;
+  $('#sync').innerHTML = t || (c ? `<span style="color:var(--y)">● ${c} pendiente(s)</span>` : (cfg.url ? '<span class="pos">● en línea</span>' : 'sin configurar'));
+}
+
+/* ============ UI base ============ */
+function go(v) { S.vista = v; if (v === 'nuevo') pedirGPS(); render(); scrollTo(0, 0); }
+function render() {
+  const v = S.vista, base = v.split(':')[0];
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === base));
+  const VISTAS = { inicio: vInicio, pagos: vPagos, nuevo: vNuevo, vehiculo: vVehiculo, mas: vMas,
+    'mas:ingresos': vIngresos, 'mas:presupuestos': vPresupuestos, 'mas:construccion': vConstruccion, 'mas:mapa': vMapa, 'mas:config': vConfig };
+  $('#view').innerHTML = (VISTAS[v] || vInicio)();
+  if (v === 'mas:mapa') initMapa();
+}
+function modal(h) { $('#sheet').innerHTML = h; $('#modal').classList.add('on'); }
+function cerrar() { $('#modal').classList.remove('on'); }
+let tt;
+function toast(m, tipo) { const t = $('#toast'); t.textContent = m; t.className = tipo || ''; t.style.display = 'block'; clearTimeout(tt); tt = setTimeout(() => t.style.display = 'none', 3200); }
+const chip = (txt, on, fn) => `<button class="chip${on ? ' on' : ''}" onclick="${fn}">${txt}</button>`;
+const mesSel = () => `<div class="mes"><button onclick="S.mes=movMes(S.mes,-1);render()">‹</button><b>${nombreMes(S.mes)}</b><button onclick="S.mes=movMes(S.mes,1);render()">›</button></div>`;
+const volver = () => `<button class="back" onclick="go('mas')">‹ Volver</button>`;
+const filaGasto = g => `<div class="row click" onclick="detGasto('${esc(g.ID)}')"><div><div>${ico(g.Categoria)} ${esc(g.Descripcion || g.Subcategoria || g.Categoria)}</div><div class="muted">${fCorta(g.Fecha)} ${esc(g.Hora || '')} · ${esc(g.Categoria)}${g.Subcategoria && g.Descripcion ? ' · ' + esc(g.Subcategoria) : ''}${n(g.Lat) ? ' · 📍' : ''}${g.Foto ? ' · 📷' : ''}</div></div><b>${$$(g.Monto)}</b></div>`;
+const ordenG = (a, b) => (String(b.Fecha) + (b.Hora || '')).localeCompare(String(a.Fecha) + (a.Hora || ''));
+
+/* ============ INICIO ============ */
+function estadoPago(p, m) {
+  const reg = D().pagosRegistro.find(r => String(r.PagoID) === String(p.ID) && r.Periodo === m);
+  const f = venceEn(m, p.Dia), dd = dif(f, hoyStr());
+  if (reg) return { reg, f, dd, txt: 'Pagado ✓', cls: 'ok', o: 3 };
+  if (dd < 0) return { f, dd, txt: `Vencido ${-dd}d`, cls: 'bad', o: 0 };
+  if (dd === 0) return { f, dd, txt: 'Vence hoy', cls: 'bad', o: 0 };
+  if (dd <= 3) return { f, dd, txt: `En ${dd} día${dd > 1 ? 's' : ''}`, cls: 'warn', o: 1 };
+  return { f, dd, txt: `Día ${+f.slice(8)}`, cls: '', o: 2 };
+}
+function vInicio() {
+  const d = D(), m = S.mes, hoy = hoyStr(), actual = m === hoy.slice(0, 7);
+  const g = d.gastos.filter(x => enMes(x.Fecha, m));
+  const tot = sum(g), ing = sum(d.ingresos.filter(x => enMes(x.Fecha, m)));
+  const variable = sum(g.filter(x => x.Categoria !== 'Pagos fijos'));
+  const nd = actual ? +hoy.slice(8) : diasMes(m);
+  const pc = {}; g.forEach(x => pc[x.Categoria] = (pc[x.Categoria] || 0) + n(x.Monto));
+  const pres = {}; d.presupuestos.forEach(b => pres[b.Categoria] = n(b.Mensual));
+  const max = Math.max(1, ...Object.values(pc));
+  const cats = Object.entries(pc).sort((a, b) => b[1] - a[1]).map(([c, v]) => {
+    const lim = pres[c], pct = lim ? v / lim * 100 : v / max * 100, cl = lim ? (pct >= 100 ? 'x' : pct >= 80 ? 'w' : '') : '';
+    return `<div class="row click" style="display:block" onclick="detCat('${esc(c)}')"><div style="display:flex;justify-content:space-between"><span>${ico(c)} ${esc(c)}</span><span>${$$(v)}${lim ? ` <span class="muted">/ ${$$(lim)}</span>` : ''}</span></div><div class="bar"><i class="${cl}" style="width:${Math.min(100, pct).toFixed(1)}%"></i></div></div>`;
+  }).join('') || '<div class="muted">Sin gastos registrados en este mes.</div>';
+  const fijos = d.pagosFijos.filter(p => p.Activo !== 'NO');
+  const est = fijos.map(p => ({ p, e: estadoPago(p, m) }));
+  const pend = est.filter(x => !x.e.reg).sort((a, b) => a.e.o - b.e.o || a.e.f.localeCompare(b.e.f)).slice(0, 4);
+  const pagados = est.filter(x => x.e.reg).length;
+  const deudas = d.deudas.filter(x => x.Tipo !== 'Me deben').map(x => {
+    const ini = n(x.MontoInicial), s = n(x.SaldoActual), pct = ini ? (ini - s) / ini * 100 : 0;
+    return `<div class="row click" style="display:block" onclick="detDeuda('${esc(x.ID)}')"><div style="display:flex;justify-content:space-between"><span>💳 ${esc(x.Nombre)}</span><span class="neg">${$$(s)}</span></div><div class="bar"><i style="width:${Math.max(0, Math.min(100, pct)).toFixed(1)}%"></i></div><div class="muted" style="margin-top:4px">Pagado ${pct.toFixed(0)}% de ${$$(ini)}</div></div>`;
+  }).join('');
+  const ult = [...g].sort(ordenG).slice(0, 15).map(filaGasto).join('') || '<div class="muted">Nada por aquí todavía.</div>';
+  return `${mesSel()}
+  <div class="card"><h2>Gastado en el mes</h2><div class="big">${$$(tot)}</div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="kpi"><small>Ingresos</small><span>${$$(ing)}</span></div>
+      <div class="kpi"><small>Balance</small><span class="${ing - tot >= 0 ? 'pos' : 'neg'}">${$$(ing - tot)}</span></div>
+      <div class="kpi"><small>${actual ? 'Hoy' : 'Fijos'}</small><span>${actual ? $$(sum(d.gastos.filter(x => x.Fecha === hoy))) : $$(tot - variable)}</span></div>
+    </div>
+    <div class="grid2" style="margin-top:10px">
+      <div class="kpi"><small>Variable / día</small><span>${$$(variable / nd)}</span></div>
+      <div class="kpi"><small>Pagos fijos</small><span>${pagados}/${fijos.length} pagados</span></div>
+    </div></div>
+  <div class="card"><h2>Por categoría</h2>${cats}</div>
+  ${pend.length ? `<div class="card"><h2>Próximos pagos</h2>${pend.map(({ p, e }) => `<div class="row click" onclick="modalPagar('${esc(p.ID)}')"><div>${esc(p.Nombre)}<div class="muted">${$$(p.Monto)} · ${fCorta(e.f)}</div></div><span class="tag ${e.cls}">${e.txt}</span></div>`).join('')}</div>` : ''}
+  ${deudas ? `<div class="card"><h2>Deudas</h2>${deudas}</div>` : ''}
+  <div class="card"><h2>Últimos movimientos</h2>${ult}</div>`;
+}
+function detCat(c) {
+  const g = D().gastos.filter(x => enMes(x.Fecha, S.mes) && x.Categoria === c).sort(ordenG);
+  const ps = {}; g.forEach(x => { const k = x.Subcategoria || 'Sin detalle'; ps[k] = (ps[k] || 0) + n(x.Monto); });
+  const max = Math.max(1, ...Object.values(ps));
+  modal(`<h2>${ico(c)} ${esc(c)} · ${nombreMes(S.mes)}</h2><div class="big">${$$(sum(g))}</div>
+  <div style="margin:10px 0">${Object.entries(ps).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div style="margin:8px 0"><div style="display:flex;justify-content:space-between"><span>${esc(k)}</span><span>${$$(v)}</span></div><div class="bar"><i style="width:${(v / max * 100).toFixed(1)}%"></i></div></div>`).join('')}</div>
+  <h2 style="margin-top:14px">Movimientos (${g.length})</h2>${g.map(filaGasto).join('')}
+  <div class="btns"><button class="btn" onclick="cerrar()">Cerrar</button></div>`);
+}
+function detGasto(id) {
+  const g = D().gastos.find(x => String(x.ID) === String(id));
+  if (!g) return toast('Registro no encontrado', 'err');
+  const fila = (k, v) => `<div class="row"><span class="muted">${k}</span><span style="text-align:right">${v}</span></div>`;
+  modal(`<h2>${ico(g.Categoria)} ${esc(g.Categoria)}</h2><div class="big">${$$(g.Monto)}</div>
+  ${fila('Detalle', esc(g.Subcategoria || '—'))}${fila('Descripción', esc(g.Descripcion || '—'))}
+  ${fila('Fecha', esc(g.Fecha) + ' ' + esc(g.Hora || ''))}${fila('Método', esc(g.Metodo || '—'))}
+  ${fila('Ubicación', n(g.Lat) ? `<a href="https://maps.google.com/?q=${n(g.Lat)},${n(g.Lng)}" target="_blank">📍 Ver en mapa</a>${g.Precision ? ` <span class="muted">±${esc(g.Precision)}m</span>` : ''}` : '—')}
+  ${fila('Recibo', g.Foto ? `<a href="${esc(g.Foto)}" target="_blank">📷 Ver foto</a>` : '—')}
+  ${g.Ref ? '<p class="muted">Este gasto está ligado a un registro de ' + esc(String(g.Ref).split(':')[0]) + '; al eliminarlo se elimina también ese registro.</p>' : ''}
+  <div class="btns"><button class="btn red" onclick="borrarReg('Gastos','${esc(g.ID)}')">Eliminar</button><button class="btn" onclick="cerrar()">Cerrar</button></div>`);
+}
+async function borrarReg(h, id) { if (!confirm('¿Eliminar este registro?')) return; if (await mutar('borrar', { hoja: h, id }, 'Eliminado')) cerrar(); }
+
+/* ============ NUEVO GASTO ============ */
+function setF(k, v) {
+  if (k === 'sub' || k === 'tipo') F[k] = F[k] === v ? '' : v; else F[k] = v;
+  if (k === 'cat') F.sub = '';
+  render();
+}
+function vNuevo() {
+  const cats = Object.keys(CATS).filter(c => !CATS[c].hidden);
+  const subs = F.cat && CATS[F.cat].subs.length ? `<label>Detalle</label><div class="chips">${CATS[F.cat].subs.map(s => chip(esc(s), F.sub === s, `setF('sub','${s}')`)).join('')}</div>` : '';
+  let extra = '';
+  if (F.cat === 'Combustible') extra = `
+    <div class="grid2"><div><label>Kilometraje</label><input type="number" inputmode="numeric" value="${esc(F.km)}" oninput="F.km=this.value" placeholder="km del odómetro"></div>
+    <div><label>Galones</label><input type="number" inputmode="decimal" step="0.01" value="${esc(F.gal)}" oninput="F.gal=this.value"></div></div>
+    <label>Gasolinera</label><input value="${esc(F.est)}" oninput="F.est=this.value" placeholder="Ej. Puma, Texaco, Uno…">
+    <div class="chk"><input type="checkbox" id="fLleno" ${F.lleno ? 'checked' : ''} onchange="F.lleno=this.checked"><label for="fLleno" style="margin:0">Tanque lleno (para calcular rendimiento)</label></div>`;
+  else if (F.cat === 'Vehículo' && F.sub === 'Mantenimiento') extra = `
+    <label>Tipo de mantenimiento</label><div class="chips">${TIPOS_MANT.map(t => chip(t, F.tipo === t, `setF('tipo','${t}')`)).join('')}</div>
+    <div class="grid2"><div><label>Kilometraje</label><input type="number" inputmode="numeric" value="${esc(F.km)}" oninput="F.km=this.value"></div>
+    <div><label>Taller</label><input value="${esc(F.taller)}" oninput="F.taller=this.value"></div></div>
+    <div class="grid2"><div><label>Próximo a los km</label><input type="number" inputmode="numeric" value="${esc(F.pkm)}" oninput="F.pkm=this.value"></div>
+    <div><label>Próxima fecha</label><input type="date" value="${esc(F.pfecha)}" onchange="F.pfecha=this.value"></div></div>`;
+  return `<div class="card"><h2>Nuevo gasto</h2>
+    <input class="monto" type="number" inputmode="decimal" step="0.01" placeholder="$0.00" value="${esc(F.monto)}" oninput="F.monto=this.value">
+    <label>Categoría</label><div class="chips">${cats.map(c => chip(ico(c) + ' ' + c, F.cat === c, `setF('cat','${c}')`)).join('')}</div>
+    ${subs}${extra}
+    <label>Descripción</label><input value="${esc(F.desc)}" oninput="F.desc=this.value" placeholder="Ej. dulce en la tienda">
+    <label>Método de pago</label><div class="chips">${['Efectivo', 'Tarjeta', 'Transferencia'].map(x => chip(x, F.metodo === x, `setF('metodo','${x}')`)).join('')}</div>
+    <div class="grid2"><div><label>Fecha</label><input type="date" value="${esc(F.fecha)}" onchange="F.fecha=this.value"></div>
+    <div><label>Foto / recibo</label><button class="btn" style="width:100%" onclick="$('#fFoto').click()">📷 ${F.foto ? 'Cambiar' : 'Agregar'}</button></div></div>
+    <input type="file" id="fFoto" accept="image/*" hidden onchange="cargarFoto(this)">
+    ${F.fotoPrev ? `<img class="foto-prev" src="${F.fotoPrev}"><div><button class="btn sm red" style="margin-top:6px" onclick="F.foto=null;F.fotoPrev='';render()">Quitar foto</button></div>` : ''}
+    <div class="gps" id="gps">${gpsTxt()}</div>
+  </div>
+  <button class="btn solid full" onclick="guardarGasto()">GUARDAR</button>
+  <button class="btn full" style="margin-top:10px;border-color:var(--d);color:var(--m)" onclick="F=nuevoF();render()">Limpiar</button>`;
+}
+function cargarFoto(inp) {
+  const f = inp.files[0]; if (!f) return;
+  const url = URL.createObjectURL(f), img = new Image();
+  img.onload = () => {
+    const M = 1280; let w = img.width, h = img.height;
+    if (Math.max(w, h) > M) { const k = M / Math.max(w, h); w = Math.round(w * k); h = Math.round(h * k); }
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    c.getContext('2d').drawImage(img, 0, 0, w, h);
+    const du = c.toDataURL('image/jpeg', 0.7);
+    F.fotoPrev = du; F.foto = du.split(',')[1]; URL.revokeObjectURL(url); render();
+  };
+  img.onerror = () => toast('No se pudo leer la imagen', 'err');
+  img.src = url;
+}
+function pedirGPS(force) {
+  if (!navigator.geolocation) { S.posErr = 'GPS no disponible'; return; }
+  if (S.gpsPend) return;
+  if (S.pos && !force && Date.now() - S.pos.t < 120000) return;
+  S.gpsPend = true; S.posErr = '';
+  navigator.geolocation.getCurrentPosition(
+    p => { S.gpsPend = false; S.pos = { lat: +p.coords.latitude.toFixed(6), lng: +p.coords.longitude.toFixed(6), acc: Math.round(p.coords.accuracy), t: Date.now() }; updGps(); },
+    e => { S.gpsPend = false; S.posErr = e.code === 1 ? 'Permiso de ubicación denegado' : 'No se pudo obtener la ubicación'; updGps(); },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+  updGps();
+}
+function gpsTxt() {
+  if (S.pos) return `<span class="pos">📍 Ubicación lista (±${S.pos.acc} m)</span> <button class="btn sm" onclick="pedirGPS(true)">↻</button>`;
+  if (S.gpsPend) return '<span class="muted">📡 Buscando ubicación…</span>';
+  return `<span style="color:var(--y)">⚠ ${esc(S.posErr || 'Sin ubicación')}</span> <button class="btn sm" onclick="pedirGPS(true)">Reintentar</button>`;
+}
+function updGps() { const el = $('#gps'); if (el) el.innerHTML = gpsTxt(); }
+async function esperarGPS(ms) { const t0 = Date.now(); while (S.gpsPend && Date.now() - t0 < ms) await new Promise(r => setTimeout(r, 200)); }
+const gpsData = () => S.pos ? { lat: S.pos.lat, lng: S.pos.lng, precision: S.pos.acc } : {};
+
+async function guardarGasto() {
+  const monto = n(F.monto);
+  if (!(monto > 0)) return toast('Escribe el monto', 'err');
+  if (!F.cat) return toast('Elige una categoría', 'err');
+  await esperarGPS(3000);
+  const base = Object.assign({ monto, fecha: F.fecha || hoyStr(), hora: horaAhora(), metodo: F.metodo, descripcion: F.desc, foto: F.foto }, gpsData());
+  let action = 'gasto', data = Object.assign({ categoria: F.cat, subcategoria: F.sub }, base);
+  if (F.cat === 'Combustible') { action = 'combustible'; data = Object.assign({ km: F.km, galones: F.gal, lleno: F.lleno, estacion: F.est }, base); }
+  else if (F.cat === 'Vehículo' && F.sub === 'Mantenimiento') { action = 'mantenimiento'; data = Object.assign({ tipo: F.tipo || 'Mantenimiento', km: F.km, taller: F.taller, proximoKm: F.pkm, proximaFecha: F.pfecha, notas: F.desc }, base); }
+  if (await mutar(action, data, 'Gasto guardado ✓')) { F = nuevoF(); go('inicio'); }
+}
+
+/* ============ PAGOS Y DEUDAS ============ */
+function vPagos() {
+  const d = D(), m = S.mes;
+  const fijos = d.pagosFijos.filter(p => p.Activo !== 'NO').sort((a, b) => n(a.Dia) - n(b.Dia));
+  const inact = d.pagosFijos.filter(p => p.Activo === 'NO');
+  let pag = 0, pen = 0;
+  const filas = fijos.map(p => {
+    const e = estadoPago(p, m);
+    if (e.reg) pag += n(e.reg.Monto); else pen += n(p.Monto);
+    return `<div class="row"><div class="click" onclick="modalPagoFijo('${esc(p.ID)}')">${esc(p.Nombre)}<div class="muted">Día ${esc(p.Dia)} · ${$$(e.reg ? e.reg.Monto : p.Monto)} · ${esc(p.Categoria)}</div></div>
+      ${e.reg ? `<button class="tag ok" style="background:none" onclick="deshacerPago('${esc(e.reg.ID)}')">Pagado ✓</button>` : `<div style="display:flex;gap:6px;align-items:center"><span class="tag ${e.cls}">${e.txt}</span><button class="btn sm" onclick="modalPagar('${esc(p.ID)}')">Pagar</button></div>`}</div>`;
+  }).join('');
+  const deudas = d.deudas.map(x => {
+    const ini = n(x.MontoInicial), s = n(x.SaldoActual), pct = ini ? (ini - s) / ini * 100 : 0, debo = x.Tipo !== 'Me deben';
+    return `<div class="row click" style="display:block" onclick="detDeuda('${esc(x.ID)}')"><div style="display:flex;justify-content:space-between"><span>${debo ? '💳' : '🤝'} ${esc(x.Nombre)} <span class="muted">${debo ? 'debo' : 'me deben'}</span></span><span class="${debo ? 'neg' : 'pos'}">${$$(s)}</span></div><div class="bar"><i style="width:${Math.max(0, Math.min(100, pct)).toFixed(1)}%"></i></div></div>`;
+  }).join('') || '<div class="muted">Sin deudas registradas.</div>';
+  return `${mesSel()}
+  <div class="card"><div class="grid3">
+    <div class="kpi"><small>Fijo mensual</small><span>${$$(fijos.reduce((s, p) => s + n(p.Monto), 0))}</span></div>
+    <div class="kpi"><small>Pagado</small><span class="pos">${$$(pag)}</span></div>
+    <div class="kpi"><small>Pendiente</small><span class="${pen ? 'neg' : 'pos'}">${$$(pen)}</span></div></div></div>
+  <div class="card"><h2>Pagos fijos</h2>${filas || '<div class="muted">Sin pagos fijos.</div>'}
+    ${inact.length ? `<div class="muted" style="margin-top:10px">Inactivos: ${inact.map(p => `<a href="#" onclick="modalPagoFijo('${esc(p.ID)}');return false">${esc(p.Nombre)}</a>`).join(', ')}</div>` : ''}
+    <button class="btn full" style="margin-top:12px" onclick="modalPagoFijo()">+ Nuevo pago fijo</button></div>
+  <div class="card"><h2>Deudas y préstamos</h2>${deudas}<button class="btn full" style="margin-top:12px" onclick="modalDeuda()">+ Nueva deuda / préstamo</button></div>`;
+}
+function modalPagar(id) {
+  const p = D().pagosFijos.find(x => String(x.ID) === String(id)); if (!p) return;
+  pedirGPS();
+  modal(`<h2>Pagar · ${esc(p.Nombre)}</h2><div class="muted">${nombreMes(S.mes)}</div>
+  <label>Monto</label><input id="mpMonto" type="number" inputmode="decimal" step="0.01" value="${n(p.Monto)}">
+  <label>Fecha de pago</label><input id="mpFecha" type="date" value="${hoyStr()}">
+  <label>Método</label><select id="mpMet"><option>Tarjeta</option><option>Efectivo</option><option>Transferencia</option></select>
+  <div class="btns"><button class="btn" onclick="cerrar()">Cancelar</button><button class="btn solid" style="flex:2" onclick="confirmarPago('${esc(id)}')">Marcar pagado</button></div>`);
+}
+async function confirmarPago(id) {
+  const data = { pagoId: id, periodo: S.mes, monto: $('#mpMonto').value, fecha: $('#mpFecha').value, metodo: $('#mpMet').value, hora: horaAhora() };
+  await esperarGPS(2500);
+  if (await mutar('pagar', Object.assign(data, gpsData()), 'Pago registrado ✓')) cerrar();
+}
+async function deshacerPago(regId) { if (!confirm('¿Desmarcar este pago? Se elimina el gasto y, si es cuota de deuda, se devuelve al saldo.')) return; await mutar('borrar', { hoja: 'PagosRegistro', id: regId }, 'Pago desmarcado'); }
+function modalPagoFijo(id) {
+  const d = D(), p = id ? d.pagosFijos.find(x => String(x.ID) === String(id)) : { Nombre: '', Dia: 1, Monto: '', Categoria: 'Servicios', DeudaID: '', Activo: 'SI' };
+  modal(`<h2>${id ? 'Editar' : 'Nuevo'} pago fijo</h2>
+  <label>Nombre</label><input id="pfN" value="${esc(p.Nombre)}">
+  <div class="grid2"><div><label>Día del mes</label><input id="pfD" type="number" min="1" max="31" value="${esc(p.Dia)}"></div><div><label>Monto</label><input id="pfM" type="number" inputmode="decimal" step="0.01" value="${esc(p.Monto)}"></div></div>
+  <label>Tipo</label><select id="pfC">${CAT_FIJOS.map(c => `<option ${c === p.Categoria ? 'selected' : ''}>${c}</option>`).join('')}</select>
+  <label>¿Abona a una deuda?</label><select id="pfDe"><option value="">No</option>${d.deudas.filter(x => x.Tipo !== 'Me deben').map(x => `<option value="${esc(x.ID)}" ${String(x.ID) === String(p.DeudaID) ? 'selected' : ''}>${esc(x.Nombre)}</option>`).join('')}</select>
+  <div class="chk"><input type="checkbox" id="pfA" ${p.Activo !== 'NO' ? 'checked' : ''}><label for="pfA" style="margin:0">Activo</label></div>
+  <div class="btns">${id ? `<button class="btn red" onclick="borrarReg('PagosFijos','${esc(id)}')">Eliminar</button>` : ''}<button class="btn" onclick="cerrar()">Cancelar</button><button class="btn solid" onclick="guardarPagoFijo('${id ? esc(id) : ''}')">Guardar</button></div>`);
+}
+async function guardarPagoFijo(id) {
+  const data = { id, nombre: $('#pfN').value.trim(), dia: $('#pfD').value, monto: $('#pfM').value, categoria: $('#pfC').value, deudaId: $('#pfDe').value, activo: $('#pfA').checked };
+  if (!data.nombre) return toast('Ponle nombre', 'err');
+  if (await mutar('pagoFijo', data, 'Pago fijo guardado ✓')) cerrar();
+}
+function modalDeuda() {
+  modal(`<h2>Nueva deuda / préstamo</h2>
+  <label>Tipo</label><select id="dT"><option>Debo</option><option>Me deben</option></select>
+  <label>Nombre</label><input id="dN" placeholder="Ej. Préstamo a Juan">
+  <label>Monto total</label><input id="dM" type="number" inputmode="decimal" step="0.01">
+  <label>Notas</label><input id="dO">
+  <div class="btns"><button class="btn" onclick="cerrar()">Cancelar</button><button class="btn solid" onclick="guardarDeuda()">Guardar</button></div>`);
+}
+async function guardarDeuda() { if (await mutar('deuda', { tipo: $('#dT').value, nombre: $('#dN').value.trim(), monto: $('#dM').value, notas: $('#dO').value }, 'Registrado ✓')) cerrar(); }
+function detDeuda(id) {
+  const d = D(), x = d.deudas.find(y => String(y.ID) === String(id)); if (!x) return;
+  const ab = d.abonos.filter(a => String(a.DeudaID) === String(id)).sort((a, b) => String(b.Fecha).localeCompare(String(a.Fecha)));
+  const ini = n(x.MontoInicial), s = n(x.SaldoActual);
+  modal(`<h2>${x.Tipo === 'Me deben' ? '🤝' : '💳'} ${esc(x.Nombre)}</h2>
+  <div class="big">${$$(s)}</div><div class="muted">Saldo actual · inicial ${$$(ini)} · ${x.Tipo === 'Me deben' ? 'me deben' : 'debo'}</div>
+  <div class="bar"><i style="width:${ini ? Math.max(0, Math.min(100, (ini - s) / ini * 100)).toFixed(1) : 0}%"></i></div>
+  ${x.Notas ? `<p class="muted">${esc(x.Notas)}</p>` : ''}
+  <label>Registrar abono</label><div style="display:flex;gap:8px"><input id="abM" type="number" inputmode="decimal" step="0.01" placeholder="$"><button class="btn solid" onclick="abonar('${esc(id)}')">Abonar</button></div>
+  <label>Ajustar saldo (según estado de cuenta)</label><div style="display:flex;gap:8px"><input id="ajS" type="number" inputmode="decimal" step="0.01" value="${s}"><button class="btn" onclick="ajustar('${esc(id)}')">Ajustar</button></div>
+  <h2 style="margin-top:16px">Abonos (${ab.length})</h2>
+  ${ab.map(a => `<div class="row"><div>${fCorta(a.Fecha)} <span class="muted">${esc(a.Notas || '')}</span></div><div style="display:flex;gap:8px;align-items:center"><b>${$$(a.Monto)}</b>${a.Ref ? '' : `<button class="btn sm red" onclick="borrarReg('Abonos','${esc(a.ID)}')">✕</button>`}</div></div>`).join('') || '<div class="muted">Sin abonos.</div>'}
+  <div class="btns"><button class="btn red" onclick="borrarReg('Deudas','${esc(id)}')">Eliminar deuda</button><button class="btn" onclick="cerrar()">Cerrar</button></div>`);
+}
+async function abonar(id) { const m = $('#abM').value; if (!(n(m) > 0)) return toast('Escribe el monto', 'err'); if (await mutar('abono', { deudaId: id, monto: m, fecha: hoyStr() }, 'Abono registrado ✓')) detDeuda(id); }
+async function ajustar(id) { const v = $('#ajS').value; if (await mutar('ajustarSaldo', { deudaId: id, saldo: v }, 'Saldo ajustado ✓')) detDeuda(id); }
+
+/* ============ VEHÍCULO ============ */
+function rendimiento(comb) {
+  const c = comb.filter(x => n(x.Km) > 0).sort((a, b) => n(a.Km) - n(b.Km));
+  let km = 0, gal = 0, din = 0, ini = null, aG = 0, aD = 0;
+  for (const x of c) {
+    if (!ini) { if (x.Lleno === 'SI') ini = x; continue; }
+    aG += n(x.Galones); aD += n(x.Monto);
+    if (x.Lleno === 'SI') { km += n(x.Km) - n(ini.Km); gal += aG; din += aD; aG = 0; aD = 0; ini = x; }
+  }
+  return gal > 0 && km > 0 ? { kmg: km / gal, cpk: din / km } : null;
+}
+function vVehiculo() {
+  const d = D(), m = S.mes, hoy = hoyStr();
+  const kmAct = Math.max(0, ...d.combustible.map(c => n(c.Km)), ...d.mantenimientos.map(x => n(x.Km)));
+  const r = rendimiento(d.combustible);
+  const cm = d.combustible.filter(c => enMes(c.Fecha, m));
+  const vm = d.gastos.filter(g => enMes(g.Fecha, m) && g.Categoria === 'Vehículo');
+  const ult = {};
+  d.mantenimientos.forEach(x => { const k = String(x.Tipo).toLowerCase(); if (!ult[k] || String(x.Fecha) >= String(ult[k].Fecha)) ult[k] = x; });
+  const prox = Object.values(ult).filter(x => x.ProximaFecha || n(x.ProximoKm)).map(x => {
+    let t = [], cls = '';
+    if (x.ProximaFecha) { const dd = dif(String(x.ProximaFecha), hoy); t.push(dd < 0 ? `atrasado ${-dd}d` : `en ${dd}d`); if (dd <= 7) cls = dd < 0 ? 'bad' : 'warn'; }
+    if (n(x.ProximoKm)) { const rk = n(x.ProximoKm) - kmAct; t.push(rk <= 0 ? `pasado ${-rk} km` : `faltan ${rk} km`); if (rk <= 300) cls = rk <= 0 ? 'bad' : (cls || 'warn'); }
+    return `<div class="row"><div>🔧 ${esc(x.Tipo)}<div class="muted">${x.ProximaFecha ? esc(x.ProximaFecha) : ''}${x.ProximaFecha && n(x.ProximoKm) ? ' · ' : ''}${n(x.ProximoKm) ? n(x.ProximoKm) + ' km' : ''}</div></div><span class="tag ${cls}">${t.join(' · ')}</span></div>`;
+  }).join('');
+  const hist = [...d.mantenimientos].sort((a, b) => String(b.Fecha).localeCompare(String(a.Fecha))).slice(0, 12)
+    .map(x => `<div class="row click" onclick="detGasto('${esc(x.GastoID)}')"><div>${esc(x.Tipo)}<div class="muted">${esc(x.Fecha)}${n(x.Km) ? ' · ' + n(x.Km) + ' km' : ''}${x.Taller ? ' · ' + esc(x.Taller) : ''}</div></div><b>${$$(x.Monto)}</b></div>`).join('') || '<div class="muted">Sin mantenimientos registrados.</div>';
+  const hc = [...d.combustible].sort((a, b) => String(b.Fecha).localeCompare(String(a.Fecha)) || n(b.Km) - n(a.Km)).slice(0, 10)
+    .map(x => `<div class="row click" onclick="detGasto('${esc(x.GastoID)}')"><div>⛽ ${esc(x.Estacion || 'Combustible')}<div class="muted">${esc(x.Fecha)}${n(x.Galones) ? ' · ' + n(x.Galones) + ' gal' : ''}${n(x.PrecioGalon) ? ' · ' + $$(x.PrecioGalon) + '/gal' : ''}${n(x.Km) ? ' · ' + n(x.Km) + ' km' : ''}${x.Lleno === 'SI' ? ' · lleno' : ''}</div></div><b>${$$(x.Monto)}</b></div>`).join('') || '<div class="muted">Sin cargas de combustible.</div>';
+  const docs = [...d.documentos].sort((a, b) => String(a.Vence).localeCompare(String(b.Vence))).map(x => {
+    const dd = dif(String(x.Vence), hoy), cls = dd < 0 ? 'bad' : dd <= 30 ? 'warn' : 'ok';
+    return `<div class="row click" onclick="borrarReg('Documentos','${esc(x.ID)}')"><div>📄 ${esc(x.Nombre)}<div class="muted">Vence ${esc(x.Vence)}${x.Notas ? ' · ' + esc(x.Notas) : ''}</div></div><span class="tag ${cls}">${dd < 0 ? 'Vencido' : dd + ' días'}</span></div>`;
+  }).join('') || '<div class="muted">Agrega tarjeta de circulación, licencia, seguro…</div>';
+  return `${mesSel()}
+  <div class="card"><div class="grid3">
+    <div class="kpi"><small>Km actual</small><span>${kmAct ? kmAct.toLocaleString('en-US') : '—'}</span></div>
+    <div class="kpi"><small>Rendimiento</small><span>${r ? r.kmg.toFixed(1) + ' km/gal' : '—'}</span></div>
+    <div class="kpi"><small>Costo / km</small><span>${r ? '$' + r.cpk.toFixed(3) : '—'}</span></div></div>
+    <div class="grid3" style="margin-top:10px">
+    <div class="kpi"><small>Combustible mes</small><span>${$$(sum(cm))}</span></div>
+    <div class="kpi"><small>Galones mes</small><span>${cm.reduce((s, x) => s + n(x.Galones), 0).toFixed(1)}</span></div>
+    <div class="kpi"><small>Otros vehículo</small><span>${$$(sum(vm))}</span></div></div>
+    <div class="btns"><button class="btn" onclick="F=nuevoF();F.cat='Combustible';go('nuevo')">⛽ + Combustible</button><button class="btn" onclick="F=nuevoF();F.cat='Vehículo';F.sub='Mantenimiento';go('nuevo')">🔧 + Mantenim.</button></div></div>
+  ${prox ? `<div class="card"><h2>Próximos mantenimientos</h2>${prox}</div>` : ''}
+  <div class="card"><h2>Documentos y vencimientos</h2>${docs}<button class="btn full" style="margin-top:12px" onclick="modalDoc()">+ Agregar vencimiento</button></div>
+  <div class="card"><h2>Historial de mantenimientos</h2>${hist}</div>
+  <div class="card"><h2>Historial de combustible</h2>${hc}</div>`;
+}
+function modalDoc() {
+  modal(`<h2>Nuevo vencimiento</h2>
+  <div class="chips">${['Tarjeta de circulación', 'Licencia de conducir', 'Seguro del vehículo', 'Revisión técnica'].map(x => chip(x, false, `$('#docN').value='${x}'`)).join('')}</div>
+  <label>Nombre</label><input id="docN">
+  <label>Fecha de vencimiento</label><input id="docV" type="date">
+  <label>Notas</label><input id="docO">
+  <div class="btns"><button class="btn" onclick="cerrar()">Cancelar</button><button class="btn solid" onclick="guardarDoc()">Guardar</button></div>`);
+}
+async function guardarDoc() { if (!$('#docV').value) return toast('Pon la fecha', 'err'); if (await mutar('documento', { nombre: $('#docN').value.trim() || 'Documento', vence: $('#docV').value, notas: $('#docO').value }, 'Vencimiento guardado ✓')) cerrar(); }
+
+/* ============ MÁS ============ */
+function vMas() {
+  const d = D();
+  const it = (i, t, s, fn) => `<div class="row click" onclick="${fn}"><div>${i} ${t}<div class="muted">${s}</div></div><span class="pos">›</span></div>`;
+  return `<div class="card menu"><h2>Más</h2>
+    ${it('💵', 'Ingresos', 'Salario, Iron Becken, extras', "go('mas:ingresos')")}
+    ${it('🎯', 'Presupuestos', 'Límite mensual por categoría', "go('mas:presupuestos')")}
+    ${it('🏗️', 'Construcción', 'Cuánto llevas invertido en la casa', "go('mas:construccion')")}
+    ${it('🗺️', 'Mapa de gastos', 'Dónde gastaste (GPS)', "go('mas:mapa')")}
+    ${it('⚙️', 'Conexión y Telegram', d.telegram ? 'Avisos activos ✓' : 'Configura los avisos', "go('mas:config')")}
+    ${d.sheetUrl ? it('📊', 'Abrir hoja de Google', 'Ver o descargar todo en Excel', `window.open('${esc(d.sheetUrl)}','_blank')`) : ''}
+    ${it('⬇️', 'Exportar mes a CSV', nombreMes(S.mes), 'exportarCSV()')}
+  </div>`;
+}
+function vIngresos() {
+  const d = D(), l = d.ingresos.filter(x => enMes(x.Fecha, S.mes)).sort((a, b) => String(b.Fecha).localeCompare(String(a.Fecha)));
+  return `${volver()}${mesSel()}
+  <div class="card"><h2>Nuevo ingreso</h2>
+    <div class="chips">${['Salario', 'Iron Becken', 'Extra', 'Otro'].map(x => chip(x, false, `$('#inF').value='${x}'`)).join('')}</div>
+    <label>Fuente</label><input id="inF" placeholder="Salario">
+    <div class="grid2"><div><label>Monto</label><input id="inM" type="number" inputmode="decimal" step="0.01"></div><div><label>Fecha</label><input id="inD" type="date" value="${hoyStr()}"></div></div>
+    <label>Notas</label><input id="inO">
+    <button class="btn solid full" style="margin-top:12px" onclick="guardarIngreso()">Guardar ingreso</button></div>
+  <div class="card"><h2>Ingresos del mes · ${$$(sum(l))}</h2>${l.map(x => `<div class="row click" onclick="borrarReg('Ingresos','${esc(x.ID)}')"><div>${esc(x.Fuente)}<div class="muted">${esc(x.Fecha)}${x.Notas ? ' · ' + esc(x.Notas) : ''}</div></div><b class="pos">${$$(x.Monto)}</b></div>`).join('') || '<div class="muted">Sin ingresos este mes.</div>'}
+  ${l.length ? '<div class="muted" style="margin-top:8px">Toca un ingreso para eliminarlo.</div>' : ''}</div>`;
+}
+async function guardarIngreso() {
+  const data = { fuente: $('#inF').value.trim() || 'Otro', monto: $('#inM').value, fecha: $('#inD').value, notas: $('#inO').value };
+  if (!(n(data.monto) > 0)) return toast('Escribe el monto', 'err');
+  await mutar('ingreso', data, 'Ingreso guardado ✓');
+}
+function vPresupuestos() {
+  const d = D(), g = d.gastos.filter(x => enMes(x.Fecha, S.mes));
+  const pres = {}; d.presupuestos.forEach(b => pres[b.Categoria] = n(b.Mensual));
+  return `${volver()}${mesSel()}<div class="card"><h2>Presupuesto mensual</h2><p class="muted">Pon 0 para no tener límite. Telegram te avisa al llegar al 80% y al 100%.</p>
+  ${Object.keys(CATS).filter(c => !CATS[c].hidden).map(c => {
+    const s = sum(g.filter(x => x.Categoria === c)), lim = pres[c] || 0, pct = lim ? s / lim * 100 : 0;
+    return `<div style="margin:12px 0"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span>${ico(c)} ${c}<div class="muted">gastado ${$$(s)}</div></span><input style="width:110px;text-align:right" type="number" inputmode="decimal" value="${lim || ''}" placeholder="0" onchange="mutar('presupuesto',{categoria:'${c}',mensual:this.value},'Presupuesto guardado ✓')"></div>${lim ? `<div class="bar"><i class="${pct >= 100 ? 'x' : pct >= 80 ? 'w' : ''}" style="width:${Math.min(100, pct).toFixed(1)}%"></i></div>` : ''}</div>`;
+  }).join('')}</div>`;
+}
+function vConstruccion() {
+  const g = D().gastos.filter(x => x.Categoria === 'Construcción').sort(ordenG);
+  const ps = {}; g.forEach(x => { const k = x.Subcategoria || 'Sin detalle'; ps[k] = (ps[k] || 0) + n(x.Monto); });
+  const max = Math.max(1, ...Object.values(ps));
+  const pm = {}; g.forEach(x => { const k = String(x.Fecha).slice(0, 7); pm[k] = (pm[k] || 0) + n(x.Monto); });
+  return `${volver()}<div class="card"><h2>🏗️ Total invertido en construcción</h2><div class="big">${$$(sum(g))}</div>
+    <div class="grid2" style="margin-top:10px"><div class="kpi"><small>Este mes</small><span>${$$(pm[hoyStr().slice(0, 7)] || 0)}</span></div><div class="kpi"><small>Registros</small><span>${g.length}</span></div></div></div>
+  <div class="card"><h2>Por rubro</h2>${Object.entries(ps).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div style="margin:9px 0"><div style="display:flex;justify-content:space-between"><span>${esc(k)}</span><span>${$$(v)}</span></div><div class="bar"><i style="width:${(v / max * 100).toFixed(1)}%"></i></div></div>`).join('') || '<div class="muted">Aún no hay gastos de construcción.</div>'}</div>
+  <div class="card"><h2>Por mes</h2>${Object.entries(pm).sort((a, b) => b[0].localeCompare(a[0])).map(([k, v]) => `<div class="row"><span>${nombreMes(k)}</span><b>${$$(v)}</b></div>`).join('') || '<div class="muted">—</div>'}</div>
+  <div class="card"><h2>Últimos registros</h2>${g.slice(0, 20).map(filaGasto).join('') || '<div class="muted">—</div>'}</div>`;
+}
+function vMapa() {
+  return `${volver()}${mesSel()}<div class="chips" style="margin-bottom:10px">${chip('Solo ' + nombreMes(S.mes), !S.mapaTodo, 'S.mapaTodo=false;render()')}${chip('Todo', S.mapaTodo, 'S.mapaTodo=true;render()')}</div><div id="mapa"></div><p class="muted">El tamaño del círculo depende del monto. Toca un punto para ver el detalle.</p>`;
+}
+function cargarLeaflet() {
+  return new Promise((res, rej) => {
+    if (window.L) return res();
+    const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(l);
+    const s = document.createElement('script'); s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; s.onload = res; s.onerror = rej; document.head.appendChild(s);
+  });
+}
+async function initMapa() {
+  try { await cargarLeaflet(); } catch (e) { $('#mapa').innerHTML = '<p class="muted" style="padding:14px">No se pudo cargar el mapa (¿sin internet?)</p>'; return; }
+  if (!$('#mapa')) return;
+  const pts = D().gastos.filter(g => n(g.Lat) && (S.mapaTodo || enMes(g.Fecha, S.mes)));
+  const map = L.map('mapa');
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap © CARTO', maxZoom: 19 }).addTo(map);
+  if (!pts.length) { map.setView([13.6929, -89.2182], 12); return; }
+  const b = [];
+  pts.forEach(g => {
+    const ll = [n(g.Lat), n(g.Lng)]; b.push(ll);
+    L.circleMarker(ll, { radius: Math.min(20, 5 + Math.sqrt(n(g.Monto)) * 1.6), color: '#00ff41', fillColor: '#00ff41', fillOpacity: .35, weight: 1 })
+      .addTo(map).bindPopup(`<b>${$$(g.Monto)}</b><br>${ico(g.Categoria)} ${esc(g.Descripcion || g.Subcategoria || g.Categoria)}<br>${esc(g.Fecha)} ${esc(g.Hora || '')}`);
+  });
+  map.fitBounds(b, { padding: [30, 30], maxZoom: 16 });
+}
+function vConfig() {
+  const d = D();
+  const tgHtml = d.telegram
+    ? `<div class="pos">✅ Vinculado${d.bot ? ' con @' + esc(d.bot) : ''}</div><p class="muted">Todos los días: 7:00 a.m. pagos, mantenimientos y vencimientos próximos · 9:00 p.m. resumen de lo que gastaste.</p>
+       <button class="btn full" onclick="mutar('probarAviso',{},'Revisa tu Telegram 📨')">Enviar avisos de prueba</button>
+       <button class="btn full" style="margin-top:8px;border-color:var(--d);color:var(--m)" onclick="S.d.telegram=false;render()">Cambiar bot</button>`
+    : `<ol class="muted" style="padding-left:18px;line-height:1.7"><li>En Telegram busca <b>@BotFather</b> y envíale <b>/newbot</b></li><li>Ponle un nombre (ej. Control Kevin) y un usuario que termine en <b>bot</b></li><li>Copia el token que te da y pégalo aquí</li></ol>
+       <input id="tgTok" placeholder="123456789:AAH...">
+       <button class="btn full" style="margin-top:10px" onclick="guardarBot()">Guardar bot</button>
+       ${d.bot ? `<p class="muted" style="margin-top:14px">Ahora abre <a href="https://t.me/${esc(d.bot)}" target="_blank">@${esc(d.bot)}</a>, toca <b>Iniciar</b> (/start) y vuelve aquí:</p><button class="btn solid full" onclick="mutar('telegramVincular',{},'¡Vinculado! ✓')">Vincular</button>` : ''}`;
+  return `${S.d ? volver() : ''}
+  ${!cfg.url ? '<div class="card"><h2>Bienvenido, Kevin</h2><p class="muted">Pega aquí la URL /exec de tu Apps Script y el TOKEN que te salió al ejecutar <b>instalar</b>.</p></div>' : ''}
+  <div class="card"><h2>Conexión</h2>
+    <label>URL de Apps Script (/exec)</label><input id="cUrl" value="${esc(cfg.url)}" placeholder="https://script.google.com/macros/s/…/exec">
+    <label>Token</label><input id="cTok" value="${esc(cfg.token)}">
+    <button class="btn solid full" style="margin-top:12px" onclick="guardarCfg()">Guardar y probar</button></div>
+  ${cfg.url ? `<div class="card"><h2>Avisos por Telegram</h2>${tgHtml}</div>
+  <div class="card"><h2>Datos</h2><button class="btn full" onclick="cargar()">⟳ Sincronizar ahora</button>
+    <p class="muted">Pendientes sin enviar: ${LS.get('cp_cola', []).length}</p></div>` : ''}`;
+}
+async function guardarCfg() {
+  cfg = { url: $('#cUrl').value.trim(), token: $('#cTok').value.trim() }; LS.set('cp_cfg', cfg);
+  if (await cargar()) { toast('Conectado ✓'); go('inicio'); }
+}
+async function guardarBot() {
+  const t = $('#tgTok').value.trim(); if (!t) return toast('Pega el token', 'err');
+  await mutar('telegram', { token: t }, 'Bot guardado ✓ Ahora envíale /start');
+}
+function exportarCSV() {
+  const g = D().gastos.filter(x => enMes(x.Fecha, S.mes)).sort(ordenG);
+  const cols = ['Fecha', 'Hora', 'Categoria', 'Subcategoria', 'Descripcion', 'Monto', 'Metodo', 'Lat', 'Lng', 'Foto'];
+  const csv = [cols.join(',')].concat(g.map(r => cols.map(c => '"' + String(r[c] ?? '').replace(/"/g, '""') + '"').join(','))).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv' })); a.download = 'gastos_' + S.mes + '.csv'; a.click();
+}
+
+/* ============ Matrix rain ============ */
+(function () {
+  const c = $('#rain'), x = c.getContext('2d'), fs = 15, ch = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ0123456789$';
+  let drops = [];
+  const rs = () => { c.width = innerWidth; c.height = innerHeight; drops = Array(Math.ceil(c.width / fs)).fill(0).map(() => Math.random() * -60); };
+  rs(); addEventListener('resize', rs);
+  let last = 0;
+  (function f(t) {
+    requestAnimationFrame(f);
+    if (t - last < 75) return; last = t;
+    x.fillStyle = 'rgba(0,0,0,.12)'; x.fillRect(0, 0, c.width, c.height);
+    x.fillStyle = '#00ff41'; x.font = fs + 'px monospace';
+    drops.forEach((d, i) => { x.fillText(ch[Math.random() * ch.length | 0], i * fs, d * fs); drops[i] = d * fs > c.height && Math.random() > .975 ? 0 : d + 1; });
+  })(0);
+})();
+
+/* ============ inicio ============ */
+let promptInst = null;
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); promptInst = e; $('#inst').style.display = ''; });
+function instalarApp() { if (promptInst) { promptInst.prompt(); promptInst = null; $('#inst').style.display = 'none'; } }
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+addEventListener('online', () => cargar(true));
+document.addEventListener('visibilitychange', () => { if (!document.hidden && cfg.url && S.vista !== 'nuevo') cargar(true); });
+setSync();
+if (cfg.url) { render(); cargar(true); } else { S.vista = 'mas:config'; render(); }
+</script>
+</body>
+</html>
