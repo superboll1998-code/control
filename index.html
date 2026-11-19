@@ -73,6 +73,8 @@ label{display:block;color:var(--m);font-size:11px;margin:12px 0 5px;text-transfo
 .chk{display:flex;gap:8px;align-items:center;margin-top:12px}.chk input{width:auto}
 .back{background:none;border:0;color:var(--n);font:inherit;padding:4px 0 12px;font-size:14px}
 ol{margin:0}
+.mtx{filter:invert(1) hue-rotate(180deg) brightness(.75) contrast(1.1) saturate(.6) sepia(.35) hue-rotate(70deg)}
+.leaflet-container{background:#000!important}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#000!important;color:var(--t)!important;border:1px solid var(--n)}
 </style>
 </head>
@@ -578,7 +580,7 @@ async function initMapa() {
   if (!$('#mapa')) return;
   const pts = D().gastos.filter(g => n(g.Lat) && (S.mapaTodo || enMes(g.Fecha, S.mes)));
   const map = L.map('mapa');
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap © CARTO', maxZoom: 19 }).addTo(map);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19, className: 'mtx' }).addTo(map);
   if (!pts.length) { map.setView([13.6929, -89.2182], 12); return; }
   const b = [];
   pts.forEach(g => {
